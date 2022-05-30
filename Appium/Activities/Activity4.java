@@ -1,4 +1,4 @@
-package Project;
+package Activities;
 
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
@@ -13,61 +13,59 @@ import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-
 
 public class Activity4 {
-    AndroidDriver<MobileElement> driver;
+
+    private AndroidDriver<MobileElement> driver;
     WebDriverWait wait;
 
     @BeforeClass
     public void setUp() throws MalformedURLException {
-        // Set the Desired Capabilities
         DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("platformName", "Android");
+        caps.setCapability("platformName", "android");
         caps.setCapability("automationName", "UiAutomator2");
-        caps.setCapability("appPackage", "com.google.android.keep");
-        caps.setCapability("appActivity", ".activities.BrowseActivity");
+        caps.setCapability("appPackage", "com.android.contacts");
+        caps.setCapability("appActivity", ".activities.PeopleActivity");
         caps.setCapability("noReset", true);
 
-        // Instantiate Appium Driver
         URL appServer = new URL("http://127.0.0.1:4723/wd/hub");
         driver = new AndroidDriver<>(appServer, caps);
-        wait = new WebDriverWait(driver, 5);
-
+        wait = new WebDriverWait(driver,10);
     }
 
     @Test
-    public void test4() throws InterruptedException {
-        String stitle = "Bonus Activity";
-        String snote = "With Google Keep";
+    public void addContact(){
+        wait.until(ExpectedConditions.elementToBeClickable(MobileBy.id("floating_action_button_container")));
+        driver.findElementById("floating_action_button_container").click();
 
-        wait.until(ExpectedConditions.elementToBeClickable(MobileBy.id("new_note_button")));
-        MobileElement createNote = driver.findElementByAccessibilityId("New text note");
-        createNote.click();
-        wait.until(ExpectedConditions.elementToBeClickable(MobileBy.id("editable_title")));
-        MobileElement title = driver.findElementById("editable_title");
-        MobileElement note = driver.findElementById("edit_note_text");
-        title.sendKeys(stitle);
-        note.sendKeys(snote);
-        Thread.sleep(2000);
-        driver.findElementByAccessibilityId("Reminder").click();
-        driver.findElementByXPath("//android.widget.TextView[@text=\"Tomorrow morning\"]").click();
-        driver.findElementByXPath("//android.widget.ImageButton[@content-desc=\"Open navigation drawer\"]").click();
-        wait.until(ExpectedConditions.elementToBeClickable(MobileBy.id("new_note_button")));
-        driver.findElementByAccessibilityId("Open navigation drawer").click();
-        driver.findElementById("drawer_navigation_reminders").click();
+        wait.until(ExpectedConditions.elementToBeClickable(MobileBy.xpath("//android.widget.EditText[@text='First name']")));
 
-        String reminderTitle = "//android.widget.TextView[@text=\"Reminders\"]";
-        wait.until(ExpectedConditions.visibilityOfElementLocated(MobileBy.xpath(reminderTitle)));
-        List<MobileElement> numberOfTasks = driver.findElementsById("browse_note_interior_content");
-        System.out.println("Total Notes added "+numberOfTasks.size());
-        Assert.assertEquals(numberOfTasks.size(),1);
+        MobileElement firstName = driver.findElementByXPath("//android.widget.EditText[@text='First name']");
+        MobileElement lastName = driver.findElementByXPath("//android.widget.EditText[@text='Last name']");
+        MobileElement phone = driver.findElementByXPath("//android.widget.EditText[@text='Phone']");
+
+        firstName.sendKeys("Aaditya");
+        lastName.sendKeys("Varma");
+        phone.sendKeys("9991284782");
+
+        driver.findElementById("editor_menu_save_button").click();
+        driver.navigate().back();
+        wait.until(ExpectedConditions.presenceOfElementLocated(MobileBy.id("toolbar_parent")));
+
+        MobileElement mobileCard = driver.findElementById("toolbar_parent");
+        Assert.assertTrue(mobileCard.isDisplayed());
+
+        String contactName = driver.findElementById("cliv_name_textview").getText();
+        Assert.assertEquals(contactName, "Aaditya Varma");
     }
 
 
-    @AfterClass
-    public void tearDown(){
-        driver.quit();
-    }
+
+//    @AfterClass
+//    public void tearDown(){
+//
+//        driver.quit();
+//    }
 }
+
+

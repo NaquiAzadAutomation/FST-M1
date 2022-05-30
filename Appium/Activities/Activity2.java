@@ -1,4 +1,4 @@
-package Project;
+package Activities;
 
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
@@ -13,54 +13,61 @@ import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-
 
 public class Activity2 {
-    AndroidDriver<MobileElement> driver;
+
+    private AndroidDriver<MobileElement> driver;
     WebDriverWait wait;
 
     @BeforeClass
     public void setUp() throws MalformedURLException {
-        // Set the Desired Capabilities
         DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("platformName", "Android");
+        caps.setCapability("platformName", "android");
         caps.setCapability("automationName", "UiAutomator2");
-        caps.setCapability("appPackage", "com.google.android.keep");
-        caps.setCapability("appActivity", ".activities.BrowseActivity");
+        caps.setCapability("appPackage", "com.android.chrome");
+        caps.setCapability("appActivity", "com.google.android.apps.chrome.Main");
         caps.setCapability("noReset", true);
 
-        // Instantiate Appium Driver
         URL appServer = new URL("http://127.0.0.1:4723/wd/hub");
         driver = new AndroidDriver<>(appServer, caps);
-        wait = new WebDriverWait(driver, 5);
-
+        wait = new WebDriverWait(driver,10);
     }
 
     @Test
-    public void test1() throws InterruptedException {
-        String stitle = "Complete Activity";
-        String snote = "With Google Keep";
+    public void act2(){
 
-        wait.until(ExpectedConditions.elementToBeClickable(MobileBy.id("new_note_button")));
-        MobileElement createNote = driver.findElementByAccessibilityId("New text note");
-        createNote.click();
-        wait.until(ExpectedConditions.elementToBeClickable(MobileBy.id("editable_title")));
-        MobileElement title = driver.findElementById("editable_title");
-        MobileElement note = driver.findElementById("edit_note_text");
-        title.sendKeys(stitle);
-        note.sendKeys(snote);
-        Thread.sleep(2000);
-        driver.findElementByXPath("//android.widget.ImageButton[@content-desc=\"Open navigation drawer\"]").click();
-        wait.until(ExpectedConditions.elementToBeClickable(MobileBy.id("new_note_button")));
-        List<MobileElement> numberOfTasks = driver.findElementsById("browse_note_interior_content");
-        System.out.println("Total Notes added "+numberOfTasks.size());
-        Assert.assertEquals(numberOfTasks.size(),1);
+        driver.get("https://www.training-support.net/");
+//        wait.until(ExpectedConditions.elementToBeClickable(MobileBy.id("about-link")));
+
+        String pageTitle = driver
+                .findElementByXPath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.webkit.WebView/android.view.View/android.view.View[1]/android.view.View[2]")
+                .getText();
+        System.out.println("Title on Homepage: " + pageTitle);
+
+        // Find About Us button and click it
+        MobileElement aboutButton = driver.findElementByXPath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.webkit.WebView/android.view.View/android.view.View[1]/android.view.View[4]");
+        aboutButton.click();
+
+        // Wait for new page to load
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                MobileBy.xpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.webkit.WebView/android.view.View/android.view.View[1]/android.view.View[2]")
+        ));
+
+        // Get heading on About Us page and print it
+        String newPageTitle = driver
+                .findElementByXPath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[1]/android.widget.FrameLayout[1]/android.webkit.WebView/android.view.View/android.view.View[1]/android.view.View[2]")
+                .getText();
+        System.out.println("Title on new page: " + newPageTitle);
+
+        // Assertions
+        Assert.assertEquals(pageTitle, "Training Support");
+        Assert.assertEquals(newPageTitle, "About Us");
     }
 
-
-    @AfterClass
-    public void tearDown(){
-        driver.quit();
-    }
+//    @AfterClass
+//    public void tearDown(){
+//        driver.quit();
+//    }
 }
+
+

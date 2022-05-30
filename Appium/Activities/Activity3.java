@@ -1,4 +1,4 @@
-package Project;
+package Activities;
 
 import io.appium.java_client.MobileBy;
 import io.appium.java_client.MobileElement;
@@ -13,44 +13,79 @@ import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-
 
 public class Activity3 {
-    AndroidDriver<MobileElement> driver;
+
+    private AndroidDriver<MobileElement> driver;
     WebDriverWait wait;
 
     @BeforeClass
     public void setUp() throws MalformedURLException {
-        // Set the Desired Capabilities
         DesiredCapabilities caps = new DesiredCapabilities();
-        caps.setCapability("platformName", "Android");
+        caps.setCapability("platformName", "android");
         caps.setCapability("automationName", "UiAutomator2");
-        caps.setCapability("appPackage", "com.android.chrome");
-        caps.setCapability("appActivity", "com.google.android.apps.chrome.Main");
+        caps.setCapability("appPackage", "com.android.calculator2");
+        caps.setCapability("appActivity", ".Calculator");
         caps.setCapability("noReset", true);
 
-        // Instantiate Appium Driver
-        URL appServer = new URL("http://0.0.0.0:4723/wd/hub");
+
+        URL appServer = new URL("http://127.0.0.1:4723/wd/hub");
         driver = new AndroidDriver<>(appServer, caps);
-        wait = new WebDriverWait(driver, 5);
-
-        // Navigate to the page
-        driver.get("https://www.training-support.net/selenium");
-
+        wait = new WebDriverWait(driver,10);
     }
 
     @Test
-    public void test3() throws InterruptedException {
-
-        String xpath = "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[1]/android.widget.FrameLayout[2]/android.view.View";
-        wait.until(ExpectedConditions.visibilityOfElementLocated(MobileBy.xpath(xpath)));
-//        driver.findElement(MobileBy.AndroidUIAutomator("UiScrollable(UiSelector()).scrollToEnd(1)"));
-        String UiScrollable = "UiScrollable(UiSelector().scrollable(true))";
-
+    public void add(){
+        driver.findElementById("digit_5").click();
+        driver.findElementByAccessibilityId("plus").click();
+        driver.findElementById("digit_9").click();
+        driver.findElement(MobileBy.id("eq")).click();
+        String result = driver.findElement(MobileBy.id("result")).getText();
+        System.out.println("Result is : "+result);
+        Assert.assertEquals(result, "14");
     }
-//    @AfterClass
-//    public void tearDown(){
-//        driver.quit();
-//    }
+
+    @Test
+    public void sub(){
+        driver.findElementById("digit_1").click();
+        driver.findElementById("digit_0").click();
+        driver.findElementByAccessibilityId("minus").click();
+        driver.findElementById("digit_5").click();
+        driver.findElement(MobileBy.id("eq")).click();
+        String result = driver.findElement(MobileBy.id("result")).getText();
+        System.out.println("Result is : "+result);
+        Assert.assertEquals(result, "5");
+    }
+
+    @Test
+    public void mul(){
+        driver.findElementById("digit_5").click();
+        driver.findElementByAccessibilityId("multiply").click();
+        driver.findElementById("digit_1").click();
+        driver.findElementById("digit_0").click();
+        driver.findElementById("digit_0").click();
+        driver.findElement(MobileBy.id("eq")).click();
+        String result = driver.findElement(MobileBy.id("result")).getText();
+        System.out.println("Result is : "+result);
+        Assert.assertEquals(result, "500");
+    }
+
+    @Test
+    public void div(){
+        driver.findElementById("digit_5").click();
+        driver.findElementById("digit_0").click();
+        driver.findElementByAccessibilityId("divide").click();
+        driver.findElementById("digit_2").click();
+        driver.findElement(MobileBy.id("eq")).click();
+        String result = driver.findElement(MobileBy.id("result")).getText();
+        System.out.println("Result is : "+result);
+        Assert.assertEquals(result, "25");
+    }
+
+    @AfterClass
+    public void tearDown(){
+        driver.quit();
+    }
 }
+
+
